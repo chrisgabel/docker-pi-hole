@@ -50,17 +50,19 @@ def test_pihole_ftl_architecture(docker):
 
 
 # Wait 5 seconds for startup, then kill the start.sh script
-# Finally, grep the FTL log to see if it has been shut down cleanly
+# Finally, check the FTL log to see if it has been shut down cleanly
 def test_pihole_ftl_clean_shutdown(docker):
     func = docker.run(
         """
         sleep 5
         killall --signal 15 start.sh
-        sleep 5
-        grep 'terminated' /var/log/pihole/FTL.log
+        pihole-FTL wait-for '########## FTL terminated after' /var/log/pihole/FTL.log 10
     """
     )
-    assert "INFO: ########## FTL terminated after" in func.stdout
+    assert (
+        'Found string "########## FTL terminated after" in file /var/log/pihole/FTL.log'
+        in func.stdout
+    )
     assert "(code 0)" in func.stdout
 
 
