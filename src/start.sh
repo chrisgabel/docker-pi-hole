@@ -75,10 +75,9 @@ start() {
         sleep 0.5
     done
 
-    #  Wait until the FTL log contains the "FTL started" message before continuing
-    while ! grep -q '########## FTL started' /var/log/pihole/FTL.log; do
-        sleep 0.5
-    done
+    #  Wait until the FTL log contains the "FTL started" message before continuing, timeout after 10 seconds
+    logsize_before=$(stat -c%s /var/log/pihole/FTL.log)
+    /usr/bin/pihole-FTL wait-for '########## FTL started' /var/log/pihole/FTL.log 10 "${logsize_before}"
 
     pihole updatechecker
     local versionsOutput
