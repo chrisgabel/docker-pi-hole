@@ -108,6 +108,9 @@ start() {
     # Pass the exit code through to the stop function
     stop $FTL_EXIT_CODE
   fi
+	
+  route add -net 192.168.0.0/23 gw 10.0.0.11
+
 }
 
 stop() {
